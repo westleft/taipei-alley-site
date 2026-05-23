@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Taipei — App Icon</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f5f3ee; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    #__bundler_loading { position: fixed; bottom: 20px; right: 20px; font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #666; background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); z-index: 10000; }
+    #__bundler_thumbnail { position: fixed; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f5f3ee; z-index: 9999; }
+    #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; }
+    #__bundler_placeholder { color: #999; font-size: 14px; }
+  </style>
+  <noscript>
+    <style>#__bundler_loading { display: none; }</style>
+    <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
+      This page requires JavaScript to display.
+    </div>
+  </noscript>
+</head>
+<body>
+  <div id="__bundler_thumbnail">
+  <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <rect width="512" height="512" rx="112" fill="#ffffff"></rect>
+    <g stroke="#0F766E" stroke-linecap="round" stroke-width="14">
+      <line x1="138" y1="408" x2="218" y2="408"></line>
+      <line x1="240" y1="408" x2="372" y2="408"></line>
+      <line x1="178" y1="438" x2="332" y2="438"></line>
+    </g>
+    <g fill="#0F766E">
+      <rect x="252" y="74" width="8" height="44" rx="2"></rect>
+      <polygon points="240,118 272,118 264,134 248,134"></polygon>
+      <polygon points="232,138 280,138 286,170 226,170"></polygon>
+      <rect x="226" y="170" width="60" height="6"></rect>
+      <polygon points="228,182 284,182 290,214 222,214"></polygon>
+      <rect x="222" y="214" width="68" height="6"></rect>
+      <polygon points="224,226 288,226 294,258 218,258"></polygon>
+      <rect x="218" y="258" width="76" height="6"></rect>
+      <polygon points="220,270 292,270 298,302 214,302"></polygon>
+      <rect x="214" y="302" width="84" height="6"></rect>
+      <polygon points="216,314 296,314 302,346 210,346"></polygon>
+      <rect x="210" y="346" width="92" height="6"></rect>
+      <polygon points="212,358 300,358 306,378 206,378"></polygon>
+      <rect x="196" y="378" width="120" height="14" rx="2"></rect>
+    </g>
+  </svg>
+</div>
+  <div id="__bundler_loading">Unpacking...</div>
+
+  <script>
+    
+document.addEventListener('DOMContentLoaded', async function() {
+  const loading = document.getElementById('__bundler_loading');
+  function setStatus(msg) { if (loading) loading.textContent = msg; }
+
+  // Error sink persists across replaceWith since it's on window, not the DOM.
+  window.addEventListener('error', function(e) {
+    var p = document.body || document.documentElement;
+    var d = document.getElementById('__bundler_err') || p.appendChild(document.createElement('div'));
+    d.id = '__bundler_err';
+    d.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;font:12px/1.4 ui-monospace,monospace;background:#2a1215;color:#ff8a80;padding:10px 14px;border-radius:8px;border:1px solid #5c2b2e;z-index:99999;white-space:pre-wrap;max-height:40vh;overflow:auto';
+    d.textContent = (d.textContent ? d.textContent + String.fromCharCode(10) : '') +
+      '[bundle] ' + (e.message || e.type) +
+      (e.filename ? ' (' + e.filename.slice(0, 60) + ':' + e.lineno + ')' : '');
+  }, true);
+
+  try {
+    const manifestEl = document.querySelector('script[type="__bundler/manifest"]');
+    const templateEl = document.querySelector('script[type="__bundler/template"]');
+    if (!manifestEl || !templateEl) {
+      setStatus('Error: missing bundle data');
+      console.error('[bundler] Missing script tags — manifestEl:', !!manifestEl, 'templateEl:', !!templateEl);
+      return;
+    }
+
+    const manifest = JSON.parse(manifestEl.textContent);
+    let template = JSON.parse(templateEl.textContent);
+
+    const uuids = Object.keys(manifest);
+    setStatus('Unpacking ' + uuids.length + ' assets...');
+
+    const blobUrls = {};
+    await Promise.all(uuids.map(async (uuid) => {
+      const entry = manifest[uuid];
+      try {
+        const binaryStr = atob(entry.data);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+
+        let finalBytes = bytes;
+        if (entry.compressed) {
+          if (typeof DecompressionStream !== 'undefined') {
+            const ds = new DecompressionStream('gzip');
+            const writer = ds.writable.getWriter();
+            const reader = ds.readable.getReader();
+            writer.write(bytes);
+            writer.close();
+            const chunks = [];
+            let totalLen = 0;
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              chunks.push(value);
+              totalLen += value.length;
+            }
+            finalBytes = new Uint8Array(totalLen);
+            let offset = 0;
+            for (const chunk of chunks) { finalBytes.set(chunk, offset); offset += chunk.length; }
+          } else {
+            console.warn('DecompressionStream not available, asset ' + uuid + ' may not render');
+          }
+        }
+
+        blobUrls[uuid] = URL.createObjectURL(new Blob([finalBytes], { type: entry.mime }));
+      } catch (err) {
+        console.error('Failed to decode asset ' + uuid + ':', err);
+        blobUrls[uuid] = URL.createObjectURL(new Blob([], { type: entry.mime }));
+      }
+    }));
+
+    const extResEl = document.querySelector('script[type="__bundler/ext_resources"]');
+    const extResources = extResEl ? JSON.parse(extResEl.textContent) : [];
+    const resourceMap = {};
+    for (const entry of extResources) {
+      if (blobUrls[entry.uuid]) resourceMap[entry.id] = blobUrls[entry.uuid];
+    }
+
+    setStatus('Rendering...');
+    for (const uuid of uuids) template = template.split(uuid).join(blobUrls[uuid]);
+
+    // Strip integrity + crossorigin — blob URLs from a file:// document inherit
+    // a null origin, so crossorigin forces a CORS fetch that SRI then rejects.
+    // The manifest bytes are ours; SRI protects against CDN compromise, not this.
+    template = template.replace(/\s+integrity="[^"]*"/gi, '').replace(/\s+crossorigin="[^"]*"/gi, '');
+
+    const resourceScript = '<script>window.__resources = ' +
+      JSON.stringify(resourceMap).split('</' + 'script>').join('<\\/' + 'script>') +
+      ';</' + 'script>';
+    // Inject after <head> so the DOCTYPE stays first; prepending the script
+    // would push the parser into quirks mode. DOMParser always emits a <head>
+    // (synthesizing one if the source HTML omitted it) but may carry
+    // attributes through, so match the full opening tag. slice() rather than
+    // replace() keeps us clear of $-pattern substitution in resourceScript.
+    const headOpen = template.match(/<head[^>]*>/i);
+    if (headOpen) {
+      const i = headOpen.index + headOpen[0].length;
+      template = template.slice(0, i) + resourceScript + template.slice(i);
+    }
+
+    // Parse the template and swap the root element. Scripts inserted via
+    // DOMParser/replaceWith are inert per spec — re-create each with
+    // createElement so they execute, awaiting onload for src scripts to
+    // preserve ordering (React before ReactDOM before Babel before text/babel).
+    const doc = new DOMParser().parseFromString(template, 'text/html');
+    document.documentElement.replaceWith(doc.documentElement);
+    const dead = Array.from(document.scripts);
+    for (const old of dead) {
+      const s = document.createElement('script');
+      for (const a of old.attributes) s.setAttribute(a.name, a.value);
+      s.textContent = old.textContent;
+      // text/babel scripts with a src: fetch and inline. transformScriptTags
+      // does XHR against the src, but blob:null/ from a file:// origin is
+      // silently dropped. Inlining makes it a plain inline babel script,
+      // which transformScriptTags handles unconditionally.
+      if ((s.type === 'text/babel' || s.type === 'text/jsx') && s.src) {
+        const r = await fetch(s.src);
+        s.textContent = await r.text();
+        s.removeAttribute('src');
+      }
+      const p = s.src ? new Promise(function(r) { s.onload = s.onerror = r; }) : null;
+      old.replaceWith(s);
+      if (p) await p;
+    }
+    // Babel standalone auto-transforms type=text/babel on DOMContentLoaded,
+    // which fired before we swapped the document. Trigger manually if present.
+    if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
+      window.Babel.transformScriptTags();
+    }
+  } catch (err) {
+    setStatus('Error unpacking: ' + err.message);
+    console.error('Bundle unpack error:', err);
+  }
+});
+
+  </script>
+
+  <script type="__bundler/manifest">
+{}
+  </script>
+
+  <script type="__bundler/ext_resources">
+[]
+  </script>
+
+  <script type="__bundler/template">
+"<!DOCTYPE html>\n<html lang=\"en\"><head>\n<meta charset=\"utf-8\">\n<title>Taipei — App Icon<\u002Ftitle>\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n\n<style>\n  :root {\n    --teal: #0F766E;\n    --ink: #0b1f1d;\n    --paper: #f5f3ee;\n    --paper-2: #ecebe5;\n    --rule: #d9d6cc;\n  }\n  * { box-sizing: border-box; }\n  html, body { margin: 0; padding: 0; }\n  body {\n    background: var(--paper);\n    color: var(--ink);\n    font-family: ui-monospace, \"SF Mono\", Menlo, Consolas, monospace;\n    font-size: 13px;\n    line-height: 1.45;\n    -webkit-font-smoothing: antialiased;\n  }\n\n  .wrap {\n    max-width: 1180px;\n    margin: 0 auto;\n    padding: 56px 48px 96px;\n  }\n\n  header {\n    display: flex;\n    align-items: flex-end;\n    justify-content: space-between;\n    gap: 32px;\n    padding-bottom: 24px;\n    border-bottom: 1px solid var(--rule);\n  }\n  header h1 {\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-weight: 500;\n    font-size: 28px;\n    letter-spacing: -0.01em;\n    margin: 0 0 6px;\n    color: var(--ink);\n  }\n  header .meta {\n    color: #6c6a63;\n    font-size: 12px;\n  }\n  header .swatches {\n    display: flex;\n    gap: 10px;\n    align-items: center;\n  }\n  .sw {\n    display: flex; align-items: center; gap: 8px;\n    font-size: 12px;\n    color: #6c6a63;\n  }\n  .sw i {\n    display: inline-block;\n    width: 14px; height: 14px;\n    border-radius: 3px;\n    border: 1px solid rgba(0,0,0,0.08);\n  }\n\n  section.block {\n    margin-top: 56px;\n  }\n  section.block > .label {\n    display: flex; align-items: baseline; justify-content: space-between;\n    margin-bottom: 20px;\n  }\n  section.block > .label h2 {\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-weight: 500;\n    font-size: 13px;\n    letter-spacing: 0.08em;\n    text-transform: uppercase;\n    color: #6c6a63;\n    margin: 0;\n  }\n  section.block > .label .note {\n    font-size: 11px;\n    color: #8a8881;\n  }\n\n  /* ---------------- HERO ---------------- */\n  .hero {\n    display: grid;\n    grid-template-columns: 1.2fr 1fr;\n    gap: 56px;\n    align-items: center;\n  }\n  .hero .stage {\n    aspect-ratio: 1 / 1;\n    background:\n      linear-gradient(var(--paper-2), var(--paper-2));\n    border-radius: 28px;\n    display: grid;\n    place-items: center;\n    position: relative;\n    overflow: hidden;\n  }\n  .hero .stage::before {\n    /* subtle grid backdrop */\n    content: \"\";\n    position: absolute; inset: 0;\n    background-image:\n      linear-gradient(to right, rgba(11,31,29,0.05) 1px, transparent 1px),\n      linear-gradient(to bottom, rgba(11,31,29,0.05) 1px, transparent 1px);\n    background-size: 40px 40px;\n    background-position: -1px -1px;\n    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);\n  }\n  .hero .icon-xl {\n    width: 62%;\n    aspect-ratio: 1/1;\n    position: relative;\n    z-index: 1;\n    filter: drop-shadow(0 30px 60px rgba(15,118,110,0.15));\n  }\n  .hero .icon-xl svg { width: 100%; height: 100%; display: block; }\n  .hero .copy h3 {\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-weight: 500;\n    font-size: 40px;\n    letter-spacing: -0.02em;\n    margin: 0 0 16px;\n  }\n  .hero .copy p {\n    max-width: 36ch;\n    color: #4d4b46;\n    margin: 0 0 28px;\n  }\n  .hero .copy .specs {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 14px 28px;\n    border-top: 1px solid var(--rule);\n    padding-top: 20px;\n  }\n  .hero .copy .specs dt {\n    font-size: 11px;\n    text-transform: uppercase;\n    letter-spacing: 0.08em;\n    color: #8a8881;\n    margin-bottom: 2px;\n  }\n  .hero .copy .specs dd {\n    margin: 0 0 6px;\n    color: var(--ink);\n    font-size: 13px;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  }\n\n  /* ---------------- SIZE LADDER ---------------- */\n  .ladder {\n    display: flex;\n    align-items: flex-end;\n    gap: 36px;\n    padding: 28px 4px;\n  }\n  .ladder .tile {\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n    gap: 12px;\n  }\n  .ladder .tile .icon {\n    aspect-ratio: 1/1;\n    background: #fff;\n    border: 1px solid var(--rule);\n  }\n  .ladder .tile .icon svg { width: 100%; height: 100%; display: block; }\n  .ladder .tile.s1 .icon { width: 192px; border-radius: 42px; }\n  .ladder .tile.s2 .icon { width: 128px; border-radius: 28px; }\n  .ladder .tile.s3 .icon { width: 80px;  border-radius: 18px; }\n  .ladder .tile.s4 .icon { width: 48px;  border-radius: 11px; }\n  .ladder .tile.s5 .icon { width: 32px;  border-radius: 7px;  }\n  .ladder .tile.s6 .icon { width: 16px;  border-radius: 4px;  }\n  .ladder .tile .cap {\n    font-size: 11px;\n    color: #8a8881;\n    letter-spacing: 0.04em;\n  }\n\n  /* ---------------- CONTEXT ---------------- */\n  .context {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    gap: 24px;\n  }\n  .card {\n    background: #fff;\n    border: 1px solid var(--rule);\n    border-radius: 18px;\n    padding: 22px;\n    display: flex; flex-direction: column;\n    min-height: 260px;\n  }\n  .card .ctxhead {\n    display: flex; align-items: center; justify-content: space-between;\n    margin-bottom: 16px;\n  }\n  .card .ctxhead .t {\n    font-size: 11px; color: #8a8881; text-transform: uppercase; letter-spacing: 0.08em;\n  }\n  .card .ctxbody {\n    flex: 1;\n    display: grid; place-items: center;\n  }\n\n  /* mobile homescreen mock */\n  .home {\n    width: 100%; aspect-ratio: 9/16;\n    background: linear-gradient(180deg, #c6d0d2 0%, #a9b6b9 100%);\n    border-radius: 22px;\n    padding: 14px 10px 18px;\n    display: grid;\n    grid-template-rows: auto 1fr auto;\n    gap: 10px;\n  }\n  .home .clock { color: #fff; font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif; font-weight: 500; font-size: 11px; text-align: center; opacity: .9; }\n  .home .grid {\n    display: grid; grid-template-columns: repeat(4, 1fr);\n    gap: 10px 8px;\n    align-content: start;\n  }\n  .home .app { aspect-ratio: 1/1; background: rgba(255,255,255,0.55); border-radius: 9px; }\n  .home .app.featured { background: #fff; padding: 4px; display: grid; place-items: center; }\n  .home .app.featured svg { width: 100%; height: 100%; display: block; border-radius: 6px; }\n  .home .dock {\n    display: grid; grid-template-columns: repeat(4, 1fr);\n    gap: 8px;\n    padding: 6px;\n    background: rgba(255,255,255,0.35);\n    border-radius: 14px;\n  }\n  .home .dock .app { background: rgba(255,255,255,0.7); }\n\n  /* browser tab favicon */\n  .browser {\n    width: 100%;\n    background: #fff;\n    border-radius: 10px;\n    border: 1px solid var(--rule);\n    overflow: hidden;\n  }\n  .browser .bar {\n    background: #eeece5;\n    padding: 8px 10px;\n    display: flex; align-items: center; gap: 8px;\n    border-bottom: 1px solid var(--rule);\n  }\n  .browser .dots { display: flex; gap: 5px; }\n  .browser .dots i { width: 9px; height: 9px; border-radius: 50%; background: #d3d0c6; display: inline-block; }\n  .browser .tabs {\n    display: flex; gap: 6px;\n    padding: 6px 8px 0;\n    background: #eeece5;\n  }\n  .browser .tab {\n    display: inline-flex; align-items: center; gap: 6px;\n    background: #fff; border: 1px solid var(--rule); border-bottom: none;\n    border-radius: 7px 7px 0 0;\n    padding: 6px 10px;\n    font-size: 11px;\n    color: #4d4b46;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  }\n  .browser .tab.muted { background: #e7e5dd; color: #8a8881; }\n  .browser .tab .fav { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }\n  .browser .tab .fav svg { width: 100%; height: 100%; display: block; border-radius: 3px; }\n  .browser .url {\n    padding: 8px 10px;\n    border-top: 1px solid var(--rule);\n    font-size: 11px; color: #8a8881;\n    font-family: ui-monospace, Menlo, monospace;\n  }\n\n  /* color inversion card */\n  .inverts {\n    display: grid; grid-template-columns: 1fr 1fr;\n    gap: 12px;\n    width: 100%;\n  }\n  .inv {\n    aspect-ratio: 1/1;\n    border-radius: 22px;\n    display: grid; place-items: center;\n    padding: 14%;\n  }\n  .inv.a { background: #fff; border: 1px solid var(--rule); }\n  .inv.b { background: var(--teal); }\n  .inv.c { background: #0b1f1d; }\n  .inv.d { background: #f0d9a8; }\n  .inv svg { width: 100%; height: 100%; display: block; }\n\n  /* construction */\n  .construction {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 32px;\n    align-items: center;\n  }\n  .construction .frame {\n    aspect-ratio: 1/1;\n    background: #fff;\n    border: 1px solid var(--rule);\n    border-radius: 28px;\n    position: relative;\n    overflow: hidden;\n    padding: 8%;\n  }\n  .construction .frame svg { width: 100%; height: 100%; display: block; }\n  .construction .notes p {\n    margin: 0 0 12px;\n    color: #4d4b46;\n  }\n  .construction .notes h4 {\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-weight: 500;\n    font-size: 18px;\n    margin: 0 0 12px;\n    color: var(--ink);\n  }\n  .construction .notes ul {\n    list-style: none; padding: 0; margin: 16px 0 0;\n    border-top: 1px solid var(--rule);\n    padding-top: 16px;\n  }\n  .construction .notes li {\n    display: grid;\n    grid-template-columns: 88px 1fr;\n    gap: 18px;\n    padding: 8px 0;\n    border-bottom: 1px dashed var(--rule);\n  }\n  .construction .notes li:last-child { border-bottom: none; }\n  .construction .notes li .k {\n    font-size: 11px; color: #8a8881;\n    text-transform: uppercase; letter-spacing: 0.08em;\n  }\n\n  footer {\n    margin-top: 80px;\n    padding-top: 20px;\n    border-top: 1px solid var(--rule);\n    display: flex; justify-content: space-between;\n    color: #8a8881;\n    font-size: 11px;\n  }\n\n<\u002Fstyle>\n<\u002Fhead>\n<body>\n\n<!-- ===================== REUSABLE ICON ===================== -->\n<!--\n  The icon is one SVG, used at every size. Geometry:\n    - Square rounded tile (concentric radius, ~22% of side)\n    - Centered tiered tower silhouette inspired by a pagoda\n      stack: a flat base, eight tiered sections that widen\n      slightly toward the bottom (the pagoda “flare”),\n      and a slim antenna spire\n    - Below the tower: three short horizontal alley/street\n      strokes suggesting a grid of streets at ground level.\n-->\n<svg width=\"0\" height=\"0\" style=\"position:absolute\" aria-hidden=\"true\">\n  <defs>\n    <symbol id=\"taipei-icon\" viewBox=\"0 0 512 512\">\n      <!-- tile -->\n      <rect x=\"0\" y=\"0\" width=\"512\" height=\"512\" rx=\"112\" ry=\"112\" fill=\"#ffffff\"><\u002Frect>\n\n      <!-- alley/street motif: three short rules under the tower -->\n      <g stroke=\"#0F766E\" stroke-linecap=\"round\" stroke-width=\"14\">\n        <line x1=\"138\" y1=\"408\" x2=\"218\" y2=\"408\"><\u002Fline>\n        <line x1=\"240\" y1=\"408\" x2=\"372\" y2=\"408\"><\u002Fline>\n        <line x1=\"178\" y1=\"438\" x2=\"332\" y2=\"438\"><\u002Fline>\n      <\u002Fg>\n\n      <!-- tower group -->\n      <g fill=\"#0F766E\">\n        <!-- spire -->\n        <rect x=\"252\" y=\"74\" width=\"8\" height=\"44\" rx=\"2\"><\u002Frect>\n        <!-- crown / pinnacle base -->\n        <polygon points=\"240,118 272,118 264,134 248,134\"><\u002Fpolygon>\n        <!-- 8 tiers, each slightly wider toward the base.\n             Each tier is a trapezoid with a small inverted-flare lip. -->\n        <!-- tier 1 (top) -->\n        <polygon points=\"232,138 280,138 286,170 226,170\"><\u002Fpolygon>\n        <rect x=\"226\" y=\"170\" width=\"60\" height=\"6\"><\u002Frect>\n        <!-- tier 2 -->\n        <polygon points=\"228,182 284,182 290,214 222,214\"><\u002Fpolygon>\n        <rect x=\"222\" y=\"214\" width=\"68\" height=\"6\"><\u002Frect>\n        <!-- tier 3 -->\n        <polygon points=\"224,226 288,226 294,258 218,258\"><\u002Fpolygon>\n        <rect x=\"218\" y=\"258\" width=\"76\" height=\"6\"><\u002Frect>\n        <!-- tier 4 -->\n        <polygon points=\"220,270 292,270 298,302 214,302\"><\u002Fpolygon>\n        <rect x=\"214\" y=\"302\" width=\"84\" height=\"6\"><\u002Frect>\n        <!-- tier 5 -->\n        <polygon points=\"216,314 296,314 302,346 210,346\"><\u002Fpolygon>\n        <rect x=\"210\" y=\"346\" width=\"92\" height=\"6\"><\u002Frect>\n        <!-- tier 6 -->\n        <polygon points=\"212,358 300,358 306,378 206,378\"><\u002Fpolygon>\n        <!-- base plinth -->\n        <rect x=\"196\" y=\"378\" width=\"120\" height=\"14\" rx=\"2\"><\u002Frect>\n      <\u002Fg>\n    <\u002Fsymbol>\n  <\u002Fdefs>\n<\u002Fsvg>\n\n<div class=\"wrap\">\n\n  <header>\n    <div>\n      <h1>Taipei — App Icon<\u002Fh1>\n      <div class=\"meta\">Single-color mark · square w/ rounded corners · web + mobile<\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"swatches\">\n      <span class=\"sw\"><i style=\"background:#0F766E\"><\u002Fi>#0F766E · primary<\u002Fspan>\n      <span class=\"sw\"><i style=\"background:#FFFFFF\"><\u002Fi>#FFFFFF · ground<\u002Fspan>\n    <\u002Fdiv>\n  <\u002Fheader>\n\n  <!-- HERO -->\n  <section class=\"block\">\n    <div class=\"hero\">\n      <div class=\"stage\">\n        <div class=\"icon-xl\">\n          <svg viewBox=\"0 0 512 512\"><use href=\"#taipei-icon\"><\u002Fuse><\u002Fsvg>\n        <\u002Fdiv>\n      <\u002Fdiv>\n      <div class=\"copy\">\n        <h3>A tower, eight tiers, three streets.<\u002Fh3>\n        <p>A pagoda-stacked silhouette anchored on a short alley grid. The mark reads as architecture at large sizes and as a confident teal glyph at favicon scale — no gradients, no shadows, no clutter.<\u002Fp>\n        <dl class=\"specs\">\n          <div>\n            <dt>Form<\u002Fdt>\n            <dd>Rounded square, r = 22% of side<\u002Fdd>\n          <\u002Fdiv>\n          <div>\n            <dt>Construction<\u002Fdt>\n            <dd>Flat vector, 1 fill + 1 stroke<\u002Fdd>\n          <\u002Fdiv>\n          <div>\n            <dt>Min legible size<\u002Fdt>\n            <dd>16 × 16 px<\u002Fdd>\n          <\u002Fdiv>\n          <div>\n            <dt>Safe area<\u002Fdt>\n            <dd>8% inset on all edges<\u002Fdd>\n          <\u002Fdiv>\n        <\u002Fdl>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <!-- SIZE LADDER -->\n  <section class=\"block\">\n    <div class=\"label\">\n      <h2>Size ladder<\u002Fh2>\n      <div class=\"note\">192 → 16 px · same vector, same proportions<\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"ladder\">\n      <div class=\"tile s1\"><div class=\"icon\"><svg viewBox=\"0 0 512 512\"><use href=\"#taipei-icon\"><\u002Fuse><\u002Fsvg><\u002Fdiv><div class=\"cap\">192<\u002Fdiv><\u002Fdiv>\n      <div class=\"tile s2\"><div class=\"icon\"><svg viewBox=\"0 0 512 512\"><use href=\"#taipei-icon\"><\u002Fuse><\u002Fsvg><\u002Fdiv><div class=\"cap\">128<\u002Fdiv><\u002Fdiv>\n      <div class=\"tile s3\"><div class=\"icon\"><svg viewBox=\"0 0 512 512\"><use href=\"#taipei-icon\"><\u002Fuse><\u002Fsvg><\u002Fdiv><div class=\"cap\">80<\u002Fdiv><\u002Fdiv>\n      <div class=\"tile s4\"><div class=\"icon\"><svg viewBox=\"0 0 512 512\"><use href=\"#taipei-icon\"><\u002Fuse><\u002Fsvg><\u002Fdiv><div class=\"cap\">48<\u002Fdiv><\u002Fdiv>\n      <div class=\"tile s5\"><div class=\"icon\"><svg viewBox=\"0 0 512 512\"><use href=\"#taipei-icon\"><\u002Fuse><\u002Fsvg><\u002Fdiv><div class=\"cap\">32<\u002Fdiv><\u002Fdiv>\n      <div class=\"tile s6\"><div class=\"icon\"><svg viewBox=\"0 0 512 512\"><use href=\"#taipei-icon\"><\u002Fuse><\u002Fsvg><\u002Fdiv><div class=\"cap\">16<\u002Fdiv><\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <!-- CONSTRUCTION -->\n  <section class=\"block\">\n    <div class=\"label\">\n      <h2>Anatomy<\u002Fh2>\n      <div class=\"note\">how the silhouette is built<\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"construction\">\n      <div class=\"frame\">\n        <!-- annotated version -->\n        <svg viewBox=\"0 0 512 512\">\n          <!-- faint reference grid -->\n          <g stroke=\"#d9d6cc\" stroke-width=\"1\" fill=\"none\">\n            <line x1=\"256\" y1=\"0\" x2=\"256\" y2=\"512\"><\u002Fline>\n            <line x1=\"0\" y1=\"256\" x2=\"512\" y2=\"256\"><\u002Fline>\n            <rect x=\"40\" y=\"40\" width=\"432\" height=\"432\" rx=\"92\"><\u002Frect>\n          <\u002Fg>\n          <use href=\"#taipei-icon\"><\u002Fuse>\n          <!-- callouts -->\n          <g font-family=\"ui-monospace, Menlo, monospace\" font-size=\"11\" fill=\"#8a8881\">\n            <!-- spire -->\n            <line x1=\"256\" y1=\"74\" x2=\"380\" y2=\"74\" stroke=\"#8a8881\" stroke-width=\"1\"><\u002Fline>\n            <text x=\"386\" y=\"78\">spire<\u002Ftext>\n            <!-- tiers -->\n            <line x1=\"298\" y1=\"258\" x2=\"400\" y2=\"258\" stroke=\"#8a8881\" stroke-width=\"1\"><\u002Fline>\n            <text x=\"406\" y=\"262\">8 tiers<\u002Ftext>\n            <!-- base -->\n            <line x1=\"316\" y1=\"392\" x2=\"408\" y2=\"392\" stroke=\"#8a8881\" stroke-width=\"1\"><\u002Fline>\n            <text x=\"414\" y=\"396\">plinth<\u002Ftext>\n            <!-- streets -->\n            <line x1=\"372\" y1=\"423\" x2=\"436\" y2=\"423\" stroke=\"#8a8881\" stroke-width=\"1\"><\u002Fline>\n            <text x=\"442\" y=\"427\">streets<\u002Ftext>\n          <\u002Fg>\n        <\u002Fsvg>\n      <\u002Fdiv>\n      <div class=\"notes\">\n        <h4>A simple, readable system.<\u002Fh4>\n        <p>The mark is built from one fill color and one stroke color — both #0F766E on #FFFFFF. No gradients, halftones, or inner detail. The proportions hold from 16 px to billboard.<\u002Fp>\n        <ul>\n          <li><span class=\"k\">Tower<\u002Fspan><span>Eight stacked trapezoids with thin lips, widening toward the base — a pagoda-style cadence.<\u002Fspan><\u002Fli>\n          <li><span class=\"k\">Spire<\u002Fspan><span>A single 8-px-wide column above a crown, balancing vertical mass.<\u002Fspan><\u002Fli>\n          <li><span class=\"k\">Streets<\u002Fspan><span>Three short horizontal strokes below the plinth suggest an alley grid without literal detail.<\u002Fspan><\u002Fli>\n          <li><span class=\"k\">Tile<\u002Fspan><span>Rounded square with corner radius equal to 22% of the side, matching iOS / Android app-icon masks.<\u002Fspan><\u002Fli>\n        <\u002Ful>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <!-- IN CONTEXT -->\n  <section class=\"block\">\n    <div class=\"label\">\n      <h2>In context<\u002Fh2>\n      <div class=\"note\">how it lives on devices &amp; surfaces<\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"context\">\n\n      <!-- Card 1: home screen -->\n      <div class=\"card\">\n        <div class=\"ctxhead\"><div class=\"t\">Mobile home screen<\u002Fdiv><div class=\"t\">iOS · 60×60<\u002Fdiv><\u002Fdiv>\n        <div class=\"ctxbody\">\n          <div class=\"home\">\n            <div class=\"clock\">9:41<\u002Fdiv>\n            <div class=\"grid\">\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app featured\">\n                <svg viewBox=\"0 0 512 512\"><use href=\"#taipei-icon\"><\u002Fuse><\u002Fsvg>\n              <\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n            <\u002Fdiv>\n            <div class=\"dock\">\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n              <div class=\"app\"><\u002Fdiv>\n            <\u002Fdiv>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <!-- Card 2: browser favicon -->\n      <div class=\"card\">\n        <div class=\"ctxhead\"><div class=\"t\">Browser tab<\u002Fdiv><div class=\"t\">favicon · 16×16<\u002Fdiv><\u002Fdiv>\n        <div class=\"ctxbody\" style=\"align-items:flex-start; align-content:flex-start;\">\n          <div class=\"browser\">\n            <div class=\"bar\">\n              <div class=\"dots\"><i><\u002Fi><i><\u002Fi><i><\u002Fi><\u002Fdiv>\n            <\u002Fdiv>\n            <div class=\"tabs\">\n              <div class=\"tab\">\n                <span class=\"fav\"><svg viewBox=\"0 0 512 512\"><use href=\"#taipei-icon\"><\u002Fuse><\u002Fsvg><\u002Fspan>\n                Taipei\n              <\u002Fdiv>\n              <div class=\"tab muted\">\n                <span class=\"fav\" style=\"background:#d3d0c6\"><\u002Fspan>\n                Itineraries\n              <\u002Fdiv>\n              <div class=\"tab muted\">\n                <span class=\"fav\" style=\"background:#d3d0c6\"><\u002Fspan>\n                Map\n              <\u002Fdiv>\n            <\u002Fdiv>\n            <div class=\"url\">taipei.app/explore<\u002Fdiv>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <!-- Card 3: inversions -->\n      <div class=\"card\">\n        <div class=\"ctxhead\"><div class=\"t\">Color variants<\u002Fdiv><div class=\"t\">2 colors, 4 grounds<\u002Fdiv><\u002Fdiv>\n        <div class=\"ctxbody\">\n          <div class=\"inverts\">\n            <div class=\"inv a\">\n              <svg viewBox=\"0 0 512 512\"><use href=\"#taipei-icon\"><\u002Fuse><\u002Fsvg>\n            <\u002Fdiv>\n            <div class=\"inv b\">\n              <svg viewBox=\"0 0 512 512\">\n                <rect width=\"512\" height=\"512\" rx=\"112\" fill=\"#0F766E\"><\u002Frect>\n                <g stroke=\"#ffffff\" stroke-linecap=\"round\" stroke-width=\"14\" fill=\"none\">\n                  <line x1=\"138\" y1=\"408\" x2=\"218\" y2=\"408\"><\u002Fline>\n                  <line x1=\"240\" y1=\"408\" x2=\"372\" y2=\"408\"><\u002Fline>\n                  <line x1=\"178\" y1=\"438\" x2=\"332\" y2=\"438\"><\u002Fline>\n                <\u002Fg>\n                <g fill=\"#ffffff\">\n                  <rect x=\"252\" y=\"74\" width=\"8\" height=\"44\" rx=\"2\"><\u002Frect>\n                  <polygon points=\"240,118 272,118 264,134 248,134\"><\u002Fpolygon>\n                  <polygon points=\"232,138 280,138 286,170 226,170\"><\u002Fpolygon>\n                  <rect x=\"226\" y=\"170\" width=\"60\" height=\"6\"><\u002Frect>\n                  <polygon points=\"228,182 284,182 290,214 222,214\"><\u002Fpolygon>\n                  <rect x=\"222\" y=\"214\" width=\"68\" height=\"6\"><\u002Frect>\n                  <polygon points=\"224,226 288,226 294,258 218,258\"><\u002Fpolygon>\n                  <rect x=\"218\" y=\"258\" width=\"76\" height=\"6\"><\u002Frect>\n                  <polygon points=\"220,270 292,270 298,302 214,302\"><\u002Fpolygon>\n                  <rect x=\"214\" y=\"302\" width=\"84\" height=\"6\"><\u002Frect>\n                  <polygon points=\"216,314 296,314 302,346 210,346\"><\u002Fpolygon>\n                  <rect x=\"210\" y=\"346\" width=\"92\" height=\"6\"><\u002Frect>\n                  <polygon points=\"212,358 300,358 306,378 206,378\"><\u002Fpolygon>\n                  <rect x=\"196\" y=\"378\" width=\"120\" height=\"14\" rx=\"2\"><\u002Frect>\n                <\u002Fg>\n              <\u002Fsvg>\n            <\u002Fdiv>\n            <div class=\"inv c\">\n              <svg viewBox=\"0 0 512 512\">\n                <rect width=\"512\" height=\"512\" rx=\"112\" fill=\"#0b1f1d\"><\u002Frect>\n                <g stroke=\"#0F766E\" stroke-linecap=\"round\" stroke-width=\"14\" fill=\"none\">\n                  <line x1=\"138\" y1=\"408\" x2=\"218\" y2=\"408\"><\u002Fline>\n                  <line x1=\"240\" y1=\"408\" x2=\"372\" y2=\"408\"><\u002Fline>\n                  <line x1=\"178\" y1=\"438\" x2=\"332\" y2=\"438\"><\u002Fline>\n                <\u002Fg>\n                <g fill=\"#0F766E\">\n                  <rect x=\"252\" y=\"74\" width=\"8\" height=\"44\" rx=\"2\"><\u002Frect>\n                  <polygon points=\"240,118 272,118 264,134 248,134\"><\u002Fpolygon>\n                  <polygon points=\"232,138 280,138 286,170 226,170\"><\u002Fpolygon>\n                  <rect x=\"226\" y=\"170\" width=\"60\" height=\"6\"><\u002Frect>\n                  <polygon points=\"228,182 284,182 290,214 222,214\"><\u002Fpolygon>\n                  <rect x=\"222\" y=\"214\" width=\"68\" height=\"6\"><\u002Frect>\n                  <polygon points=\"224,226 288,226 294,258 218,258\"><\u002Fpolygon>\n                  <rect x=\"218\" y=\"258\" width=\"76\" height=\"6\"><\u002Frect>\n                  <polygon points=\"220,270 292,270 298,302 214,302\"><\u002Fpolygon>\n                  <rect x=\"214\" y=\"302\" width=\"84\" height=\"6\"><\u002Frect>\n                  <polygon points=\"216,314 296,314 302,346 210,346\"><\u002Fpolygon>\n                  <rect x=\"210\" y=\"346\" width=\"92\" height=\"6\"><\u002Frect>\n                  <polygon points=\"212,358 300,358 306,378 206,378\"><\u002Fpolygon>\n                  <rect x=\"196\" y=\"378\" width=\"120\" height=\"14\" rx=\"2\"><\u002Frect>\n                <\u002Fg>\n              <\u002Fsvg>\n            <\u002Fdiv>\n            <div class=\"inv d\">\n              <svg viewBox=\"0 0 512 512\">\n                <rect width=\"512\" height=\"512\" rx=\"112\" fill=\"#f0d9a8\"><\u002Frect>\n                <g stroke=\"#0F766E\" stroke-linecap=\"round\" stroke-width=\"14\" fill=\"none\">\n                  <line x1=\"138\" y1=\"408\" x2=\"218\" y2=\"408\"><\u002Fline>\n                  <line x1=\"240\" y1=\"408\" x2=\"372\" y2=\"408\"><\u002Fline>\n                  <line x1=\"178\" y1=\"438\" x2=\"332\" y2=\"438\"><\u002Fline>\n                <\u002Fg>\n                <g fill=\"#0F766E\">\n                  <rect x=\"252\" y=\"74\" width=\"8\" height=\"44\" rx=\"2\"><\u002Frect>\n                  <polygon points=\"240,118 272,118 264,134 248,134\"><\u002Fpolygon>\n                  <polygon points=\"232,138 280,138 286,170 226,170\"><\u002Fpolygon>\n                  <rect x=\"226\" y=\"170\" width=\"60\" height=\"6\"><\u002Frect>\n                  <polygon points=\"228,182 284,182 290,214 222,214\"><\u002Fpolygon>\n                  <rect x=\"222\" y=\"214\" width=\"68\" height=\"6\"><\u002Frect>\n                  <polygon points=\"224,226 288,226 294,258 218,258\"><\u002Fpolygon>\n                  <rect x=\"218\" y=\"258\" width=\"76\" height=\"6\"><\u002Frect>\n                  <polygon points=\"220,270 292,270 298,302 214,302\"><\u002Fpolygon>\n                  <rect x=\"214\" y=\"302\" width=\"84\" height=\"6\"><\u002Frect>\n                  <polygon points=\"216,314 296,314 302,346 210,346\"><\u002Fpolygon>\n                  <rect x=\"210\" y=\"346\" width=\"92\" height=\"6\"><\u002Frect>\n                  <polygon points=\"212,358 300,358 306,378 206,378\"><\u002Fpolygon>\n                  <rect x=\"196\" y=\"378\" width=\"120\" height=\"14\" rx=\"2\"><\u002Frect>\n                <\u002Fg>\n              <\u002Fsvg>\n            <\u002Fdiv>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <footer>\n    <div>Taipei · app icon system v1<\u002Fdiv>\n    <div>#0F766E / #FFFFFF<\u002Fdiv>\n  <\u002Ffooter>\n\n<\u002Fdiv>\n\n\n\n<\u002Fbody><\u002Fhtml>"
+  </script>
+</body>
+</html>

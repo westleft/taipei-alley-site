@@ -1,0 +1,29 @@
+<template>
+  <svg
+    viewBox="0 0 512 512"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect width="512" height="512" rx="112" fill="#ffffff" />
+    <g stroke="#0F766E" stroke-linecap="round" stroke-width="14">
+      <line x1="138" y1="408" x2="218" y2="408" />
+      <line x1="240" y1="408" x2="372" y2="408" />
+      <line x1="178" y1="438" x2="332" y2="438" />
+    </g>
+    <g fill="#0F766E">
+      <rect x="252" y="74" width="8" height="44" rx="2" />
+      <polygon points="240,118 272,118 264,134 248,134" />
+      <polygon points="232,138 280,138 286,170 226,170" />
+      <rect x="226" y="170" width="60" height="6" />
+      <polygon points="228,182 284,182 290,214 222,214" />
+      <rect x="222" y="214" width="68" height="6" />
+      <polygon points="224,226 288,226 294,258 218,258" />
+      <rect x="218" y="258" width="76" height="6" />
+      <polygon points="220,270 292,270 298,302 214,302" />
+      <rect x="214" y="302" width="84" height="6" />
+      <polygon points="216,314 296,314 302,346 210,346" />
+      <rect x="210" y="346" width="92" height="6" />
+      <polygon points="212,358 300,358 306,378 206,378" />
+      <rect x="196" y="378" width="120" height="14" rx="2" />
+    </g>
+  </svg>
+</template>
