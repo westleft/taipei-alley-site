@@ -2,7 +2,6 @@
 import { RouterLink } from 'vue-router';
 import SiteLayout from '../components/SiteLayout.vue';
 import StoreBadges from '../components/StoreBadges.vue';
-import AppLogo from '../components/AppLogo.vue';
 
 const features = [
   {
@@ -97,6 +96,10 @@ const features = [
         </header>
 
         <div class="legal-cards">
+          <RouterLink to="/contact" class="legal-card">
+            <span class="legal-card__title">聯絡我們</span>
+            <span class="legal-card__chevron" aria-hidden="true">›</span>
+          </RouterLink>
           <RouterLink to="/privacy" class="legal-card">
             <span class="legal-card__title">隱私權政策</span>
             <span class="legal-card__chevron" aria-hidden="true">›</span>

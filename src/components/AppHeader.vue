@@ -6,6 +6,7 @@ const route = useRoute();
 
 const navItems = [
   { label: '首頁', to: '/' },
+  { label: '聯絡我們', to: '/contact' },
   { label: '隱私權政策', to: '/privacy' },
   { label: '使用者條款', to: '/terms' },
 ] as const;

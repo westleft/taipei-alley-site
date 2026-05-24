@@ -14,6 +14,7 @@ const year = new Date().getFullYear();
 
       <nav class="footer__nav" aria-label="頁尾導覽">
         <RouterLink to="/">首頁</RouterLink>
+        <RouterLink to="/contact">聯絡我們</RouterLink>
         <RouterLink to="/privacy">隱私權政策</RouterLink>
         <RouterLink to="/terms">使用者條款</RouterLink>
         <a

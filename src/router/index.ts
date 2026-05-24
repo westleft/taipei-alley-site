@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../pages/HomePage.vue';
 import PrivacyPage from '../pages/PrivacyPage.vue';
 import TermsPage from '../pages/TermsPage.vue';
+import ContactPage from '../pages/ContactPage.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -18,6 +19,12 @@ export const router = createRouter({
       name: 'terms',
       component: TermsPage,
       meta: { title: '使用者條款' },
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: ContactPage,
+      meta: { title: '聯絡我們' },
     },
   ],
   scrollBehavior() {

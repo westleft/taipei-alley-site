@@ -6,6 +6,7 @@ export const storyRouter = createRouter({
   history: createMemoryHistory('/'),
   routes: [
     { path: '/', name: 'home', component: stub },
+    { path: '/contact', name: 'contact', component: stub },
     { path: '/privacy', name: 'privacy', component: stub },
     { path: '/terms', name: 'terms', component: stub },
   ],
