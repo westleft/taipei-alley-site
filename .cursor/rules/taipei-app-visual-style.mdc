@@ -1,0 +1,58 @@
+---
+description: Taipei app visual language for web/app UI generation
+alwaysApply: true
+---
+
+# Taipei Editorial Landing Style Guide
+
+## 核心方向
+
+- 網站首頁採「雜誌感 + 城市導覽」的 editorial landing 風格
+- 保留強敘事、強視覺、長頁滾動節奏
+- App 是內容主角，網頁是品牌敘事舞台
+
+## 色彩與材質
+
+- 主背景：米紙色與深綠色對比（paper + deep teal）
+- 主要色：深綠、湖綠、亮青綠；輔助色：暖紅作地圖 pin 點綴
+- 明暗層次可用漸層、噪點 grain、霧化背景，不走扁平純白系
+
+## 排版語言
+
+- 標題使用襯線（serif）做品牌張力
+- 內文使用無襯線（sans）提高閱讀效率
+- 英文小標可用 italic 襯線做段落導入（kicker/eyebrow）
+
+## 首頁結構（固定順序）
+
+- Hero（大標 + 地圖手機 mockup + 浮動地圖標記）
+- 類別跑馬燈（marquee）
+- 功能段落（編號 01~05 的 editorial list）
+- 雙區塊 showcase（文字 + 手機畫面）
+- 品牌引言 quote
+- 深色 CTA 結尾
+
+## 元件規格
+
+- 導覽列：透明轉實色的 sticky/fixed header
+- 按鈕：圓角膠囊，主按鈕奶白底、次按鈕半透明描邊
+- 區塊標題：eyebrow + 大型 serif 標題
+- 手機 mockup：黑框機身 + notch + 強陰影
+
+## 動效規範
+
+- 允許低頻動效：載入淡入、浮動 bubble、跑馬燈
+- 滾動狀態僅做細微視覺切換，不做誇張位移
+- `prefers-reduced-motion` 必須提供降級
+
+## 響應式
+
+- 桌面維持雙欄敘事（文字 / mockup）
+- 平板與手機收斂成單欄，保留段落順序
+- 手機選單可折疊，避免導覽過長
+
+## 實作要求
+
+- 新頁面若延續首頁風格，優先重用首頁的色彩、字體、按鈕與區塊模式
+- SVG icon 優先，禁止 emoji 當正式 icon
+- 避免改成「純 SaaS 模板風」或「iOS 設定頁風」

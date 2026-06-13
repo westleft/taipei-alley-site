@@ -1,0 +1,49 @@
+---
+description: Global coding style conventions for this project
+alwaysApply: true
+---
+
+# Global Coding Style
+
+## JavaScript / TypeScript 基本風格
+
+- 優先使用 `const` 宣告；只有在必須重新賦值時才使用 `let`
+- 禁止使用 `var`
+- 不使用分號（`;`）
+- 字串一律使用單引號（`'`），除非需要字串內插值才用模板字串
+- 優先使用早回傳（early return）降低巢狀層級
+- 避免魔術數字，重複出現的數值請抽成具名常數
+
+## Vue SFC 結構與慣例
+
+- `.vue` 檔案區塊順序固定為：`<script setup lang="ts">` → `<template>` → `<style scoped>`
+- 一律使用 Composition API 與 `script setup`
+- 元件內 class 命名採一致語意（例如 `block__element--modifier`）
+- 對外連結若開新分頁，必須加上 `rel="noopener noreferrer"`
+
+## Modern CSS 原則（以 modern-css 思維為準）
+
+- 優先使用原生現代 CSS，避免舊 hack 或過度依賴 JS/預處理器
+- 優先使用 `flex/grid + gap`，不要用 margin hack 做間距
+- 優先使用 `aspect-ratio`、`inset`、`line-clamp` 等現代屬性
+- 優先使用 `:focus-visible` 提供鍵盤可及性焦點樣式
+- 優先使用 logical properties（如 `margin-inline`、`padding-block`）提升可國際化能力
+- 優先使用 CSS Custom Properties（`var(--token)`）管理主題與設計 token
+- 可用時使用 `@layer` 管理優先級，避免 `!important` 與 specificity war
+- 可用時使用 CSS nesting，但保持可讀性，避免過深巢狀
+- 需要新特性時先評估瀏覽器支援；若屬 limited feature，需提供 fallback 或 `@supports`
+
+## CSS 實作細節
+
+- 優先行動裝置（mobile-first）撰寫，再向上擴充斷點
+- 斷點語法優先 range 語法（例如 `@media (width >= 768px)`）
+- 動畫需考慮 `prefers-reduced-motion`
+- 避免寫死高度；能用內容撐開就不要強制固定高
+- style 以元件內聚為原則，僅共享 token/utility 放到全域
+
+## 可讀性與維護性
+
+- 變數命名需語意清楚，避免縮寫（常見縮寫如 `id`, `url` 可接受）
+- 新增程式碼時，盡量保持既有檔案風格一致
+- 若 formatter 與本規則衝突，以本規則為優先，並同步調整 formatter 設定
+- 新增功能時，優先重用既有元件與樣式，不重造輪子

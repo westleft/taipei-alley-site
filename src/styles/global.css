@@ -20,6 +20,9 @@
   --shadow-lg: 0 16px 48px rgba(37, 99, 235, 0.15);
   --font-sans:
     'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+  --font-serif:
+    'Noto Serif TC', 'Songti TC', 'Source Han Serif TC', 'PingFang TC', serif;
+  --color-pin: #ef5350;
   --max-width: 1120px;
   --header-height: 64px;
 }
