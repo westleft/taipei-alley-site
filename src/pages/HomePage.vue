@@ -1,76 +1,60 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import SiteLayout from '../components/SiteLayout.vue'
 import StoreBadges from '../components/StoreBadges.vue'
 
 const REVEAL_THRESHOLD = 0.15
 
-const categories = [
-  '親子共遊',
-  '戶外踏青',
-  '藝文館所',
-  '歷史建築',
-  '校外教學',
-  '單車族',
-  '無障礙旅遊',
-  '自然生態',
-  '美食探索',
-  '夜景散步',
+const { t, tm, rt } = useI18n()
+
+const categories = computed(() =>
+  (tm('home.categories') as string[]).map((category) => rt(category)),
+)
+
+interface RawValueCard {
+  title: string
+  desc: string
+}
+
+const valueCards = computed(() =>
+  (tm('home.values.cards') as RawValueCard[]).map((card) => ({
+    title: rt(card.title),
+    desc: rt(card.desc),
+  })),
+)
+
+const FEATURE_IMAGES = [
+  '/images/home.png',
+  '/images/detail.png',
+  '/images/search.png',
+  '/images/settings.png',
 ]
 
-interface Feature {
-  index: string
+interface RawFeature {
   kicker: string
   title: string
   description: string
-  image: string
   alt: string
   tags: string[]
 }
 
-const features: Feature[] = [
-  {
-    index: '01',
-    kicker: 'Discover',
-    title: '探索精彩景點',
-    description:
-      '從熱門地標到隱藏巷弄，以舒適的卡片式介面快速瀏覽台北的每一處風景，依主題分類一目了然。',
-    image: '/images/home.png',
-    alt: '漫遊台北 App 首頁，依主題瀏覽熱門景點與歷史建築',
-    tags: ['熱門景點', '歷史建築', '主題分類'],
-  },
-  {
-    index: '02',
-    kicker: 'Collect',
-    title: '收藏城市驚喜',
-    description:
-      '點開景點即可查看地址、營業時間與多張實景照片，從熱門地標到隱藏角落，完整資訊一次掌握。',
-    image: '/images/detail.png',
-    alt: '漫遊台北 App 景點詳情頁，顯示地址、營業時間與實景照片',
-    tags: ['景點詳情', '營業時間', '實景照片'],
-  },
-  {
-    index: '03',
-    kicker: 'Search',
-    title: '走進生活風景',
-    description:
-      '用標籤篩選與關鍵字搜尋，快速找到最適合的行程。親子、踏青、藝文，隨心出走、隨意探索。',
-    image: '/images/search.png',
-    alt: '漫遊台北 App 搜尋頁，使用標籤篩選與關鍵字尋找景點',
-    tags: ['標籤篩選', '關鍵字搜尋', '行程規劃'],
-  },
-  {
-    index: '04',
-    kicker: 'Settings',
-    title: '貼心又透明',
-    description:
-      '清楚的設定選項與資料來源說明，景點資訊全數取自官方公開資料，使用起來安心又自在。',
-    image: '/images/settings.png',
-    alt: '漫遊台北 App 設定頁，顯示法規、支援與資料來源資訊',
-    tags: ['隱私透明', '官方資料', '簡潔設定'],
-  },
-]
+const features = computed(() =>
+  (tm('home.features.items') as RawFeature[]).map((feature, index) => ({
+    index: String(index + 1).padStart(2, '0'),
+    kicker: rt(feature.kicker),
+    title: rt(feature.title),
+    description: rt(feature.description),
+    image: FEATURE_IMAGES[index] ?? FEATURE_IMAGES[0],
+    alt: rt(feature.alt),
+    tags: feature.tags.map((tag) => rt(tag)),
+  })),
+)
+
+const quoteLines = computed(() =>
+  (tm('home.quote.lines') as string[]).map((line) => rt(line)),
+)
 
 const pageRef = ref<HTMLElement | null>(null)
 let observer: IntersectionObserver | null = null
@@ -120,15 +104,15 @@ onBeforeUnmount(() => observer?.disconnect())
           <div class="hero__copy" data-reveal>
             <p class="hero__eyebrow">
               <span class="hero__eyebrow-dot" aria-hidden="true" />
-              台北旅遊指南 App
+              {{ t('home.hero.eyebrow') }}
             </p>
-            <h1 class="hero__title">漫遊台北</h1>
-            <p class="hero__subtitle">探索台北的精彩景點</p>
+            <h1 class="hero__title">{{ t('home.hero.title') }}</h1>
+            <p class="hero__subtitle">{{ t('home.hero.subtitle') }}</p>
             <p class="hero__desc">
-              探索城市角落，走進巷弄、美食與夜色之間。以簡潔的卡片式介面，從熱門推薦到標籤搜尋，讓規劃行程更輕鬆、更直覺。
+              {{ t('home.hero.desc') }}
             </p>
             <StoreBadges />
-            <p class="hero__note">資料來源｜台北旅遊網 Taipei Travel Net</p>
+            <p class="hero__note">{{ t('home.hero.note') }}</p>
           </div>
 
           <div class="hero__device" data-reveal style="--reveal-delay: 0.12s">
@@ -153,7 +137,7 @@ onBeforeUnmount(() => observer?.disconnect())
               <span class="phone__notch" aria-hidden="true" />
               <img
                 src="/images/home.png"
-                alt="漫遊台北 App 首頁畫面"
+                :alt="t('home.hero.deviceAlt')"
                 width="390"
                 height="844"
                 class="phone__screen"
@@ -163,7 +147,7 @@ onBeforeUnmount(() => observer?.disconnect())
         </div>
       </section>
 
-      <section class="marquee" aria-label="探索主題分類">
+      <section class="marquee" :aria-label="t('home.categoriesLabel')">
         <div class="marquee__track">
           <span
             v-for="(category, index) in categories"
@@ -186,10 +170,10 @@ onBeforeUnmount(() => observer?.disconnect())
       <section class="section values" aria-labelledby="values-heading">
         <div class="section__inner">
           <header class="section__header" data-reveal>
-            <p class="eyebrow"><em>Why 漫遊台北</em></p>
-            <h2 id="values-heading">一座城市，三種出走方式</h2>
+            <p class="eyebrow"><em>{{ t('home.values.eyebrow') }}</em></p>
+            <h2 id="values-heading">{{ t('home.values.heading') }}</h2>
             <p class="section__lead">
-              不論是計畫一整天的行程，還是想隨意走走，漫遊台北都讓你用最舒服的節奏認識這座城市。
+              {{ t('home.values.lead') }}
             </p>
           </header>
 
@@ -211,8 +195,8 @@ onBeforeUnmount(() => observer?.disconnect())
                   />
                 </svg>
               </span>
-              <h3>探索城市角落</h3>
-              <p>從地標到巷弄，跟著主題分類發掘屬於台北的日常風景。</p>
+              <h3>{{ valueCards[0]?.title }}</h3>
+              <p>{{ valueCards[0]?.desc }}</p>
             </li>
 
             <li class="value-card" data-reveal style="--reveal-delay: 0.1s">
@@ -227,8 +211,8 @@ onBeforeUnmount(() => observer?.disconnect())
                   />
                 </svg>
               </span>
-              <h3>收藏隱藏驚喜</h3>
-              <p>完整景點資訊與實景照片，把每一次的城市發現都留下來。</p>
+              <h3>{{ valueCards[1]?.title }}</h3>
+              <p>{{ valueCards[1]?.desc }}</p>
             </li>
 
             <li class="value-card" data-reveal style="--reveal-delay: 0.2s">
@@ -245,8 +229,8 @@ onBeforeUnmount(() => observer?.disconnect())
                   <circle cx="13" cy="5" r="2" fill="currentColor" />
                 </svg>
               </span>
-              <h3>用腳步出發</h3>
-              <p>用標籤篩選快速規劃，讓腳步打開城市的每一個驚喜。</p>
+              <h3>{{ valueCards[2]?.title }}</h3>
+              <p>{{ valueCards[2]?.desc }}</p>
             </li>
           </ul>
         </div>
@@ -255,8 +239,8 @@ onBeforeUnmount(() => observer?.disconnect())
       <section class="section section--muted features" aria-labelledby="features-heading">
         <div class="section__inner">
           <header class="section__header" data-reveal>
-            <p class="eyebrow"><em>Features</em></p>
-            <h2 id="features-heading">把整座台北，放進口袋</h2>
+            <p class="eyebrow"><em>{{ t('home.features.eyebrow') }}</em></p>
+            <h2 id="features-heading">{{ t('home.features.heading') }}</h2>
           </header>
 
           <div class="features__list">
@@ -294,10 +278,14 @@ onBeforeUnmount(() => observer?.disconnect())
         </div>
       </section>
 
-      <section class="quote" aria-label="品牌引言">
+      <section class="quote" :aria-label="t('home.quote.label')">
         <blockquote class="quote__inner" data-reveal>
-          <p class="quote__text">最美的台北風景，<br />就在你身邊。</p>
-          <footer class="quote__cite">漫遊台北 · 城市旅遊指南</footer>
+          <p class="quote__text">
+            <template v-for="(line, index) in quoteLines" :key="index">
+              <br v-if="index > 0" />{{ line }}
+            </template>
+          </p>
+          <footer class="quote__cite">{{ t('home.quote.cite') }}</footer>
         </blockquote>
       </section>
 
@@ -321,19 +309,15 @@ onBeforeUnmount(() => observer?.disconnect())
               </svg>
             </span>
             <div class="source-card__content">
-              <h2 id="source-heading">資料來源</h2>
-              <p>
-                本 App 的景點與旅遊資訊由
-                <strong>台北旅遊網（Taipei Travel Net）</strong>
-                提供，確保內容來自官方公開資料。
-              </p>
+              <h2 id="source-heading">{{ t('home.source.heading') }}</h2>
+              <p v-html="t('home.source.body')" />
               <a
                 class="source-card__link"
                 href="https://www.travel.taipei/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                travel.taipei
+                {{ t('home.source.link') }}
                 <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
                   <path
                     fill="none"
@@ -353,24 +337,24 @@ onBeforeUnmount(() => observer?.disconnect())
       <section class="section" aria-labelledby="legal-heading">
         <div class="section__inner">
           <header class="section__header section__header--start" data-reveal>
-            <p class="eyebrow"><em>Support</em></p>
-            <h2 id="legal-heading">法規與支援</h2>
+            <p class="eyebrow"><em>{{ t('home.support.eyebrow') }}</em></p>
+            <h2 id="legal-heading">{{ t('home.support.heading') }}</h2>
             <p class="section__lead">
-              使用 App 前，歡迎先閱讀我們的隱私權政策與使用者條款。
+              {{ t('home.support.lead') }}
             </p>
           </header>
 
           <div class="legal-cards" data-reveal>
             <RouterLink to="/contact" class="legal-card">
-              <span class="legal-card__title">聯絡我們</span>
+              <span class="legal-card__title">{{ t('nav.contact') }}</span>
               <span class="legal-card__chevron" aria-hidden="true">›</span>
             </RouterLink>
             <RouterLink to="/privacy" class="legal-card">
-              <span class="legal-card__title">隱私權政策</span>
+              <span class="legal-card__title">{{ t('nav.privacy') }}</span>
               <span class="legal-card__chevron" aria-hidden="true">›</span>
             </RouterLink>
             <RouterLink to="/terms" class="legal-card">
-              <span class="legal-card__title">使用者條款</span>
+              <span class="legal-card__title">{{ t('nav.terms') }}</span>
               <span class="legal-card__chevron" aria-hidden="true">›</span>
             </RouterLink>
           </div>
@@ -379,10 +363,10 @@ onBeforeUnmount(() => observer?.disconnect())
 
       <section class="cta">
         <div class="cta__inner" data-reveal>
-          <p class="cta__eyebrow"><em>Ready to explore</em></p>
-          <h2 class="cta__title">準備好出發了嗎？</h2>
+          <p class="cta__eyebrow"><em>{{ t('home.cta.eyebrow') }}</em></p>
+          <h2 class="cta__title">{{ t('home.cta.title') }}</h2>
           <p class="cta__desc">
-            立即下載漫遊台北，讓城市的精彩景點陪你走過每一段旅程。
+            {{ t('home.cta.desc') }}
           </p>
           <StoreBadges />
         </div>

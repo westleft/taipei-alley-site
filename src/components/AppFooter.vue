@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const year = new Date().getFullYear();
 </script>
 
@@ -8,25 +10,25 @@ const year = new Date().getFullYear();
   <footer class="footer">
     <div class="footer__inner">
       <div class="footer__brand">
-        <p class="footer__name">漫遊台北</p>
-        <p class="footer__tagline">探索台北的精彩景點</p>
+        <p class="footer__name">{{ t('brand.name') }}</p>
+        <p class="footer__tagline">{{ t('footer.tagline') }}</p>
       </div>
 
-      <nav class="footer__nav" aria-label="頁尾導覽">
-        <RouterLink to="/">首頁</RouterLink>
-        <RouterLink to="/contact">聯絡我們</RouterLink>
-        <RouterLink to="/privacy">隱私權政策</RouterLink>
-        <RouterLink to="/terms">使用者條款</RouterLink>
+      <nav class="footer__nav" :aria-label="t('footer.label')">
+        <RouterLink to="/">{{ t('nav.home') }}</RouterLink>
+        <RouterLink to="/contact">{{ t('nav.contact') }}</RouterLink>
+        <RouterLink to="/privacy">{{ t('nav.privacy') }}</RouterLink>
+        <RouterLink to="/terms">{{ t('nav.terms') }}</RouterLink>
         <a
           href="https://www.travel.taipei/"
           target="_blank"
           rel="noopener noreferrer"
         >
-          台北旅遊網
+          {{ t('footer.travelNet') }}
         </a>
       </nav>
 
-      <p class="footer__copy">© {{ year }} 漫遊台北。景點資料由台北旅遊網提供。</p>
+      <p class="footer__copy">{{ t('footer.copyright', { year }) }}</p>
     </div>
   </footer>
 </template>

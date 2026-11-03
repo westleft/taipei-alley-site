@@ -1,30 +1,36 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { watch } from 'vue';
+import {
+  createRouter,
+  createWebHistory,
+  type RouteLocationNormalized,
+} from 'vue-router';
 import HomePage from '../pages/HomePage.vue';
 import PrivacyPage from '../pages/PrivacyPage.vue';
 import TermsPage from '../pages/TermsPage.vue';
 import ContactPage from '../pages/ContactPage.vue';
+import { i18n } from '../i18n';
 
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', name: 'home', component: HomePage, meta: { title: '漫遊台北' } },
+    { path: '/', name: 'home', component: HomePage, meta: { titleKey: 'meta.home' } },
     {
       path: '/privacy',
       name: 'privacy',
       component: PrivacyPage,
-      meta: { title: '隱私權政策' },
+      meta: { titleKey: 'meta.privacy' },
     },
     {
       path: '/terms',
       name: 'terms',
       component: TermsPage,
-      meta: { title: '使用者條款' },
+      meta: { titleKey: 'meta.terms' },
     },
     {
       path: '/contact',
       name: 'contact',
       component: ContactPage,
-      meta: { title: '聯絡我們' },
+      meta: { titleKey: 'meta.contact' },
     },
   ],
   scrollBehavior() {
@@ -32,7 +38,20 @@ export const router = createRouter({
   },
 });
 
+function updateTitle(route: RouteLocationNormalized) {
+  const { t } = i18n.global;
+  const titleKey = route.meta.titleKey as string | undefined;
+  const suffix = t('meta.titleSuffix');
+  const pageTitle = titleKey ? t(titleKey) : undefined;
+  document.title =
+    pageTitle && pageTitle !== suffix ? `${pageTitle}｜${suffix}` : suffix;
+}
+
 router.afterEach((to) => {
-  const pageTitle = to.meta.title as string | undefined;
-  document.title = pageTitle ? `${pageTitle}｜漫遊台北` : '漫遊台北';
+  updateTitle(to);
+});
+
+// Re-localize the current page title whenever the locale changes.
+watch(i18n.global.locale, () => {
+  updateTitle(router.currentRoute.value);
 });

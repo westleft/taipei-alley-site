@@ -1,17 +1,64 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
+
+interface LegalBlock {
+  type: 'p' | 'ul';
+  html?: string;
+  items?: string[];
+}
+
+interface LegalSection {
+  heading: string;
+  blocks: LegalBlock[];
+}
+
 defineProps<{
   title: string;
   updatedAt: string;
+  updatedLabel: string;
+  intro: string;
+  sections: LegalSection[];
 }>();
+
+const router = useRouter();
+
+// Keep in-app anchors (marked with data-internal) as SPA navigation instead
+// of a full page reload, since the legal body is rendered via v-html.
+const onBodyClick = (event: MouseEvent) => {
+  const anchor = (event.target as HTMLElement).closest<HTMLAnchorElement>(
+    'a[data-internal]',
+  );
+  if (!anchor) return;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+    return;
+  }
+  event.preventDefault();
+  const href = anchor.getAttribute('href');
+  if (href) router.push(href);
+};
 </script>
 
 <template>
   <article class="legal-doc">
     <header class="legal-doc__header">
       <h1>{{ title }}</h1>
+      <p class="legal-doc__updated">{{ updatedLabel }}：{{ updatedAt }}</p>
     </header>
-    <div class="legal-doc__body">
-      <slot />
+    <div class="legal-doc__body" @click="onBodyClick">
+      <p v-html="intro" />
+      <template v-for="(section, index) in sections" :key="index">
+        <h2>{{ section.heading }}</h2>
+        <template v-for="(block, blockIndex) in section.blocks" :key="blockIndex">
+          <p v-if="block.type === 'p'" v-html="block.html" />
+          <ul v-else-if="block.type === 'ul'">
+            <li
+              v-for="(item, itemIndex) in block.items"
+              :key="itemIndex"
+              v-html="item"
+            />
+          </ul>
+        </template>
+      </template>
     </div>
   </article>
 </template>

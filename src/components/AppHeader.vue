@@ -1,15 +1,19 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import AppLogo from './AppLogo.vue';
+import LanguageSwitcher from './LanguageSwitcher.vue';
 
 const route = useRoute();
+const { t } = useI18n();
 
-const navItems = [
-  { label: '首頁', to: '/' },
-  { label: '聯絡我們', to: '/contact' },
-  { label: '隱私權政策', to: '/privacy' },
-  { label: '使用者條款', to: '/terms' },
-] as const;
+const navItems = computed(() => [
+  { label: t('nav.home'), to: '/' },
+  { label: t('nav.contact'), to: '/contact' },
+  { label: t('nav.privacy'), to: '/privacy' },
+  { label: t('nav.terms'), to: '/terms' },
+]);
 
 const isActive = (path: string) =>
   path === '/' ? route.path === '/' : route.path.startsWith(path);
@@ -20,10 +24,10 @@ const isActive = (path: string) =>
     <div class="header__inner">
       <RouterLink to="/" class="header__brand">
         <AppLogo class="header__logo" aria-hidden="true" />
-        <span class="header__name">漫遊台北</span>
+        <span class="header__name">{{ t('brand.name') }}</span>
       </RouterLink>
 
-      <nav class="header__nav" aria-label="主要導覽">
+      <nav class="header__nav" :aria-label="t('nav.label')">
         <RouterLink
           v-for="item in navItems"
           :key="item.to"
@@ -34,6 +38,8 @@ const isActive = (path: string) =>
           {{ item.label }}
         </RouterLink>
       </nav>
+
+      <LanguageSwitcher class="header__lang" />
     </div>
   </header>
 </template>
@@ -52,10 +58,9 @@ const isActive = (path: string) =>
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 1.25rem;
-  height: var(--header-height);
+  min-height: var(--header-height);
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
 }
 
@@ -63,10 +68,16 @@ const isActive = (path: string) =>
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  flex-shrink: 0;
+  margin-inline-end: auto;
   text-decoration: none;
   color: var(--color-text);
   font-weight: 700;
   font-size: 1.05rem;
+}
+
+.header__name {
+  white-space: nowrap;
 }
 
 .header__brand:hover {
@@ -112,14 +123,39 @@ const isActive = (path: string) =>
   background: var(--color-accent-soft);
 }
 
-@media (max-width: 640px) {
+.header__lang {
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .header__inner {
+    flex-wrap: wrap;
+    padding-block: 0.6rem;
+    row-gap: 0.5rem;
+    column-gap: 0.75rem;
+  }
+
+  /* Nav links drop to their own full-width row that scrolls horizontally
+     instead of wrapping, keeping the brand + language picker on top. */
   .header__nav {
-    gap: 0;
+    order: 3;
+    flex: 1 0 100%;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0.2rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .header__nav::-webkit-scrollbar {
+    display: none;
   }
 
   .header__link {
-    padding: 0.4rem 0.55rem;
-    font-size: 0.82rem;
+    flex-shrink: 0;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.85rem;
   }
 }
 </style>

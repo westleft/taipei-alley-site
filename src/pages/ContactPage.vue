@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import SiteLayout from '../components/SiteLayout.vue';
+
+const { t } = useI18n();
 
 const feedbackFormUrl =
   'https://docs.google.com/forms/d/e/1FAIpQLSf-XiMH_1beZ5fECNRf9Z8wszh7cAIL4Uw8hfj_3o3qAAOgZg/viewform?usp=publish-editor';
@@ -9,10 +12,10 @@ const feedbackFormUrl =
   <SiteLayout>
     <section class="contact">
       <div class="contact__inner">
-        <p class="contact__eyebrow">聯絡我們</p>
-        <h1>意見回饋與問題回報</h1>
+        <p class="contact__eyebrow">{{ t('contact.eyebrow') }}</p>
+        <h1>{{ t('contact.title') }}</h1>
         <p class="contact__description">
-          若你有功能建議、使用反饋或 Bug 回報，歡迎透過以下 Google 表單聯絡我們，我們會盡快查看。
+          {{ t('contact.description') }}
         </p>
 
         <a
@@ -21,11 +24,11 @@ const feedbackFormUrl =
           target="_blank"
           rel="noopener noreferrer"
         >
-          前往意見表單
+          {{ t('contact.formLink') }}
         </a>
 
         <p class="contact__hint">
-          表單連結：
+          {{ t('contact.hintLabel') }}
           <a :href="feedbackFormUrl" target="_blank" rel="noopener noreferrer">
             {{ feedbackFormUrl }}
           </a>

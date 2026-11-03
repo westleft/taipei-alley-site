@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import { APP_STORE_URL, GOOGLE_PLAY_URL } from '../config/store-links';
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -9,7 +12,7 @@ import { APP_STORE_URL, GOOGLE_PLAY_URL } from '../config/store-links';
       :href="APP_STORE_URL"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="在 App Store 下載漫遊台北"
+      :aria-label="t('store.appStoreAria')"
     >
       <svg
         class="store-badge__svg"
@@ -29,7 +32,7 @@ import { APP_STORE_URL, GOOGLE_PLAY_URL } from '../config/store-links';
           font-size="7"
           font-family="system-ui, sans-serif"
         >
-          下載於
+          {{ t('store.appStoreSmall') }}
         </text>
         <text
           x="44"
@@ -39,7 +42,7 @@ import { APP_STORE_URL, GOOGLE_PLAY_URL } from '../config/store-links';
           font-weight="600"
           font-family="system-ui, sans-serif"
         >
-          App Store
+          {{ t('store.appStoreName') }}
         </text>
       </svg>
     </a>
@@ -49,7 +52,7 @@ import { APP_STORE_URL, GOOGLE_PLAY_URL } from '../config/store-links';
       :href="GOOGLE_PLAY_URL"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="在 Google Play 下載漫遊台北"
+      :aria-label="t('store.googlePlayAria')"
     >
       <svg
         class="store-badge__svg"
@@ -85,7 +88,7 @@ import { APP_STORE_URL, GOOGLE_PLAY_URL } from '../config/store-links';
           font-size="7"
           font-family="system-ui, sans-serif"
         >
-          取得於
+          {{ t('store.googlePlaySmall') }}
         </text>
         <text
           x="44"
@@ -95,7 +98,7 @@ import { APP_STORE_URL, GOOGLE_PLAY_URL } from '../config/store-links';
           font-weight="600"
           font-family="system-ui, sans-serif"
         >
-          Google Play
+          {{ t('store.googlePlayName') }}
         </text>
       </svg>
     </a>
