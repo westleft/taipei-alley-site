@@ -1,29 +1,46 @@
 :root {
-  --color-bg: #f0f2f5;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f8f9fa;
-  --color-text: #1d1d1f;
-  --color-text-secondary: #6b7280;
-  --color-text-muted: #9ca3af;
-  --color-border: #e5e7eb;
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
-  --color-accent-soft: rgba(37, 99, 235, 0.1);
-  --color-teal: #0d9488;
-  --color-teal-soft: rgba(13, 148, 136, 0.12);
+  /* Warm editorial paper + Taipei-guide teal */
+  --color-bg: #f6f2ea;
+  --color-surface: #fffdf8;
+  --color-surface-muted: #efe8da;
+  --color-text: #1b2320;
+  --color-text-secondary: #566560;
+  --color-text-muted: #8b958f;
+  --color-border: #e6ddcc;
+
+  --color-teal: #0f766e;
+  --color-teal-strong: #0b5a53;
+  --color-teal-ink: #09332f;
+  --color-teal-soft: rgba(15, 118, 110, 0.1);
+
+  /* Links / interactive accent — unified with the app's teal brand */
+  --color-accent: #0f766e;
+  --color-accent-hover: #0b5a53;
+  --color-accent-soft: rgba(15, 118, 110, 0.1);
+
+  /* Warm coral — map pins & highlight moments */
+  --color-coral: #e06a4d;
+  --color-coral-soft: rgba(224, 106, 77, 0.14);
+  --color-pin: #e06a4d;
+
   --radius-sm: 10px;
   --radius-md: 16px;
-  --radius-lg: 20px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
   --radius-pill: 999px;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 16px 48px rgba(37, 99, 235, 0.15);
+
+  --shadow-sm: 0 1px 2px rgba(27, 35, 32, 0.05);
+  --shadow-md: 0 12px 32px rgba(27, 35, 32, 0.09);
+  --shadow-lg: 0 32px 64px rgba(9, 51, 47, 0.2);
+
   --font-sans:
     'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
   --font-serif:
     'Noto Serif TC', 'Songti TC', 'Source Han Serif TC', 'PingFang TC', serif;
-  --color-pin: #ef5350;
-  --max-width: 1120px;
+  --font-display:
+    'Fraunces', 'Noto Serif TC', 'Songti TC', 'Source Han Serif TC', serif;
+
+  --max-width: 1140px;
   --header-height: 64px;
 }
 

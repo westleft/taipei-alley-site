@@ -10,6 +10,7 @@ export default {
     contact: 'Contact',
     privacy: 'Privacy Policy',
     terms: 'Terms of Use',
+    download: 'Get the App',
   },
   languageSwitcher: {
     label: 'Language',
@@ -52,11 +53,18 @@ export default {
     hero: {
       eyebrow: 'Taipei Travel Guide App',
       title: 'Wander Taipei',
-      subtitle: 'Discover the best of Taipei',
-      desc: 'Explore every corner of the city—its alleys, its food, and its nightscapes. With a clean, card-based interface, from popular picks to tag-based search, planning your trip becomes easier and more intuitive.',
+      subtitle: 'Put all of Taipei in your pocket',
+      desc: 'Wander its alleys, food, and nightscapes. Browse by district and theme, search by keyword, explore on the map, listen to audio guides, and save spots offline—get to know the city at your own pace.',
       note: 'Data source | Taipei Travel Net',
       deviceAlt: 'Wander Taipei app home screen',
+      chips: ['Daily Pick', 'Audio Guide', 'Map View'],
     },
+    stats: [
+      { value: '900+', label: 'Attractions' },
+      { value: '12', label: 'Districts' },
+      { value: '10+', label: 'Themes' },
+      { value: '3', label: 'Languages' },
+    ],
     values: {
       eyebrow: 'Why Wander Taipei',
       heading: 'One city, three ways to roam',
@@ -78,40 +86,52 @@ export default {
     },
     features: {
       eyebrow: 'Features',
-      heading: 'Put all of Taipei in your pocket',
+      heading: 'Every detail, designed for the journey',
+      lead: 'From discovery and search to on-site guidance, Wander Taipei makes every step of planning simple.',
       items: [
         {
           kicker: 'Discover',
           title: 'Discover great places',
           description:
-            'From popular landmarks to hidden alleys, browse every scene of Taipei with a comfortable card-based interface, sorted by theme at a glance.',
-          alt: 'Wander Taipei app home screen, browsing popular attractions and historic buildings by theme',
-          tags: ['Popular Spots', 'Historic Sites', 'By Theme'],
+            'A “Daily Pick” surfaces one city corner each day, with popular spots and themes at a glance—inspiration starts the moment you open the app.',
+          alt: 'Wander Taipei app home screen, showing the daily pick and popular attractions',
+          tags: ['Daily Pick', 'Popular Spots', 'Search Bar'],
         },
         {
-          kicker: 'Collect',
-          title: 'Collect city surprises',
+          kicker: 'Explore',
+          title: 'Explore by district & theme',
           description:
-            'Tap any spot to see its address, opening hours, and multiple real-life photos—from popular landmarks to hidden corners, with all the details in one place.',
-          alt: 'Wander Taipei app detail page, showing address, opening hours, and real photos',
-          tags: ['Spot Details', 'Opening Hours', 'Real Photos'],
+            '12 districts, historic buildings, arts venues, night markets—dive in however you like, plus editorial collections like “Temple Trails” and “Hills & Hot Springs.”',
+          alt: 'Wander Taipei app district and theme exploration page',
+          tags: ['By District', 'Collections', 'Themed Sets'],
         },
         {
           kicker: 'Search',
-          title: 'Step into everyday scenery',
+          title: 'Search & browse',
           description:
-            'Use tag filters and keyword search to quickly find the itinerary that fits. Family, hiking, arts—head out and explore as you please.',
-          alt: 'Wander Taipei app search page, using tag filters and keywords to find attractions',
-          tags: ['Tag Filters', 'Keyword Search', 'Trip Planning'],
+            'Keyword search plus tag filters help you quickly find the right itinerary. Family, hiking, arts—head out and explore as you please.',
+          alt: 'Wander Taipei app search and attraction list page',
+          tags: ['Keyword Search', 'Tag Filters', 'Spot List'],
         },
         {
-          kicker: 'Settings',
-          title: 'Thoughtful and transparent',
+          kicker: 'Detail',
+          title: 'Details & audio guide',
           description:
-            'Clear settings and data-source notes. All attraction information comes from official public data, so you can use the app with peace of mind.',
-          alt: 'Wander Taipei app settings page, showing legal, support, and data-source information',
-          tags: ['Private & Clear', 'Official Data', 'Simple Settings'],
+            'Address, opening hours, and real photos in one view. Navigate, call, or share in a tap—and play the audio guide to hear each spot’s story as you walk.',
+          alt: 'Wander Taipei app detail page with audio guide and navigation',
+          tags: ['Audio Guide', 'One-tap Navigate', 'Photo Gallery'],
         },
+      ],
+    },
+    more: {
+      eyebrow: 'More',
+      heading: 'And a few more thoughtful touches',
+      lead: 'So every city wander feels smoother and more at ease.',
+      cards: [
+        { title: 'Map View', desc: 'Browse nearby spots on the map and plan a route that flows.' },
+        { title: 'Offline Favorites', desc: 'Save spots you love in a tap and revisit your pocket list anytime.' },
+        { title: 'Collections', desc: 'Curated sets like Temple Trails and Hills & Hot Springs—just follow along.' },
+        { title: 'Multilingual', desc: 'Switch freely between Traditional Chinese, English, and Japanese.' },
       ],
     },
     quote: {

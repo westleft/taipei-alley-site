@@ -51,8 +51,10 @@ const year = new Date().getFullYear();
 
 .footer__name {
   margin: 0 0 0.25rem;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .footer__tagline {

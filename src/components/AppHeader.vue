@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import AppLogo from './AppLogo.vue';
@@ -17,6 +17,34 @@ const navItems = computed(() => [
 
 const isActive = (path: string) =>
   path === '/' ? route.path === '/' : route.path.startsWith(path);
+
+/* Reading-progress line under the header. */
+const progress = ref(0);
+let ticking = false;
+
+const measure = () => {
+  const doc = document.documentElement;
+  const scrollable = doc.scrollHeight - doc.clientHeight;
+  progress.value = scrollable > 0 ? Math.min(1, doc.scrollTop / scrollable) : 0;
+  ticking = false;
+};
+
+const onScroll = () => {
+  if (ticking) return;
+  ticking = true;
+  requestAnimationFrame(measure);
+};
+
+onMounted(() => {
+  measure();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll);
+  window.removeEventListener('resize', onScroll);
+});
 </script>
 
 <template>
@@ -39,8 +67,21 @@ const isActive = (path: string) =>
         </RouterLink>
       </nav>
 
+      <a
+        v-if="route.path === '/'"
+        class="header__cta"
+        href="#download"
+      >
+        {{ t('nav.download') }}
+      </a>
+
       <LanguageSwitcher class="header__lang" />
     </div>
+    <div
+      class="header__progress"
+      :style="{ transform: `scaleX(${progress})` }"
+      aria-hidden="true"
+    />
   </header>
 </template>
 
@@ -49,9 +90,20 @@ const isActive = (path: string) =>
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(255, 253, 248, 0.82);
+  backdrop-filter: blur(14px) saturate(1.1);
   border-bottom: 1px solid var(--color-border);
+}
+
+.header__progress {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -1px;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--color-teal), var(--color-coral));
+  will-change: transform;
 }
 
 .header__inner {
@@ -72,8 +124,10 @@ const isActive = (path: string) =>
   margin-inline-end: auto;
   text-decoration: none;
   color: var(--color-text);
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
 }
 
 .header__name {
@@ -123,8 +177,34 @@ const isActive = (path: string) =>
   background: var(--color-accent-soft);
 }
 
+.header__cta {
+  flex-shrink: 0;
+  padding: 0.45rem 1.05rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-teal);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.header__cta:hover {
+  background: var(--color-teal-strong);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
 .header__lang {
   flex-shrink: 0;
+}
+
+@media (max-width: 860px) {
+  .header__cta {
+    display: none;
+  }
 }
 
 @media (max-width: 720px) {

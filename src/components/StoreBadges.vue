@@ -16,29 +16,39 @@ const { t } = useI18n();
     >
       <svg
         class="store-badge__svg"
-        viewBox="0 0 135 40"
+        viewBox="0 0 140 42"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
       >
-        <rect width="135" height="40" rx="6" fill="#000" />
+        <rect width="140" height="42" rx="9" fill="#15201d" />
+        <rect
+          x="0.5"
+          y="0.5"
+          width="139"
+          height="41"
+          rx="8.5"
+          fill="none"
+          stroke="rgba(255,255,255,0.14)"
+        />
         <path
           fill="#fff"
-          d="M24.77 20.3c-.03-3.2 2.6-4.74 2.72-4.82-1.48-2.16-3.78-2.46-4.6-2.5-1.96-.2-3.82 1.16-4.81 1.16-.99 0-2.52-1.13-4.14-1.1-2.13.03-4.1 1.24-5.2 3.15-2.22 3.84-.57 9.54 1.6 12.66 1.06 1.53 2.33 3.25 4 3.19 1.6-.06 2.2-1.03 4.14-1.03 1.94 0 2.48 1.03 4.17.99 1.72-.03 2.81-1.56 3.86-3.1 1.22-1.78 1.72-3.5 1.75-3.59-.04-.02-3.36-1.29-3.39-5.11zM21.35 12.2c.88-1.06 1.47-2.53 1.31-4-.99.04-2.18.66-2.89 1.47-.81.94-1.52 2.44-1.33 3.88 1.12.09 2.26-.57 2.91-1.35z"
+          transform="translate(14 8.5)"
+          d="M18.8 13.6c-.02-2.45 2-3.63 2.1-3.69-1.14-1.67-2.92-1.9-3.55-1.92-1.5-.15-2.95.89-3.72.89-.76 0-1.94-.87-3.2-.85-1.64.03-3.16.96-4.01 2.43-1.72 2.96-.44 7.35 1.23 9.76.82 1.18 1.8 2.5 3.09 2.46 1.24-.05 1.7-.8 3.2-.8 1.49 0 1.91.8 3.21.76 1.33-.02 2.17-1.2 2.98-2.39.94-1.37 1.33-2.7 1.35-2.77-.03-.01-2.6-1-2.62-3.94zM16.4 6.1c.68-.82 1.14-1.96 1.01-3.1-.98.04-2.16.65-2.86 1.46-.62.72-1.17 1.88-1.03 3 .86.07 1.75-.44 2.25-1.04z"
         />
         <text
-          x="44"
-          y="14"
-          fill="#fff"
-          font-size="7"
+          x="46"
+          y="17"
+          fill="rgba(255,255,255,0.72)"
+          font-size="7.5"
           font-family="system-ui, sans-serif"
         >
           {{ t('store.appStoreSmall') }}
         </text>
         <text
-          x="44"
-          y="27"
+          x="46"
+          y="31"
           fill="#fff"
-          font-size="13"
+          font-size="14"
           font-weight="600"
           font-family="system-ui, sans-serif"
         >
@@ -56,45 +66,40 @@ const { t } = useI18n();
     >
       <svg
         class="store-badge__svg"
-        viewBox="0 0 135 40"
+        viewBox="0 0 140 42"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
       >
-        <rect width="135" height="40" rx="6" fill="#000" />
-        <path
-          fill="#00d6ff"
-          d="M8.5 8.2l7.8 7.8-7.8 7.8V8.2z"
+        <rect width="140" height="42" rx="9" fill="#15201d" />
+        <rect
+          x="0.5"
+          y="0.5"
+          width="139"
+          height="41"
+          rx="8.5"
+          fill="none"
+          stroke="rgba(255,255,255,0.14)"
         />
-        <path
-          fill="#00f076"
-          d="M8.5 8.2l7.8 7.8 5.5-3.2L14 5.5 8.5 8.2z"
-        />
-        <path
-          fill="#ff3a44"
-          d="M8.5 23.8l7.8-7.8 5.5 3.2-5.5 9.3-7.8-4.7z"
-        />
-        <path
-          fill="#ffb300"
-          d="M16.3 16l5.5-3.2L28 5.5 16.3 16z"
-        />
-        <path
-          fill="#ffb300"
-          d="M16.3 24l11.7 6.8L21.8 27.2 16.3 24z"
-        />
+        <g transform="translate(15 10)">
+          <path fill="#00d4ff" d="M0 .9v20.2a.9.9 0 0 0 1.37.77l10.6-10.87L1.37.13A.9.9 0 0 0 0 .9Z" />
+          <path fill="#00f076" d="M1.37.13 14.7 7.8l-2.73 2.9L1.37.13Z" />
+          <path fill="#ff3a44" d="M11.97 11.3l2.73 2.9L1.37 21.87 11.97 11.3Z" />
+          <path fill="#ffce00" d="M14.7 7.8l3.84 2.21a1.26 1.26 0 0 1 0 2.18L14.7 14.2l-3-3.4 3-3Z" />
+        </g>
         <text
-          x="44"
-          y="14"
-          fill="#fff"
-          font-size="7"
+          x="46"
+          y="17"
+          fill="rgba(255,255,255,0.72)"
+          font-size="7.5"
           font-family="system-ui, sans-serif"
         >
           {{ t('store.googlePlaySmall') }}
         </text>
         <text
-          x="44"
-          y="27"
+          x="46"
+          y="31"
           fill="#fff"
-          font-size="13"
+          font-size="14"
           font-weight="600"
           font-family="system-ui, sans-serif"
         >
@@ -134,7 +139,7 @@ const { t } = useI18n();
 
 .store-badge__svg {
   display: block;
-  height: 40px;
+  height: 46px;
   width: auto;
 }
 </style>
